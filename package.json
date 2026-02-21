@@ -1,0 +1,31 @@
+{
+  "name": "domain-cli-project",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.2.23",
+  "scripts": {
+    "domain": "bun run src/cli/index.ts",
+    "dotld": "bun run src/cli/dotld.ts",
+    "link:local": "bun run scripts/link-local.ts",
+    "unlink:local": "bun run scripts/unlink-local.ts",
+    "build:release": "bash scripts/release-build.sh",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "bin": {
+    "dotld": "src/cli/dotld.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.1",
+    "@types/node": "^24.3.0",
+    "@biomejs/biome": "^1.9.4",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "ora": "^9.3.0",
+    "picocolors": "^1.1.1"
+  }
+}
