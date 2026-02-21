@@ -10,34 +10,23 @@ CLI for domain availability and price search with Dynadot.
   - `.com`, `.net`, `.org`, `.io`, `.ai`, `.co`, `.app`, `.dev`, `.sh`
 - Prints compact tree output and supports `--json`.
 
-## Example queries
+## Examples
+
+Exact domain input:
 
 ```bash
-# Single exact domain
 dotld example.com
-
-# Name without TLD (suggestions)
-dotld acme
-
-# Multiple exact domains
-dotld example.com example.io
-
-# JSON output
-dotld example.com --json
-
-# One-off key override
-dotld example.com --dynadot-key your_dynadot_key
 ```
-
-## Example output
-
-Single exact domain:
 
 ```text
 example.com · Taken
 ```
 
-Keyword suggestions:
+Keyword input (no TLD, suggested variants):
+
+```bash
+dotld acme
+```
 
 ```text
 acme
@@ -52,7 +41,7 @@ acme
 └─ acme.sh  · Taken
 ```
 
-JSON mode:
+JSON input/output:
 
 ```bash
 dotld example.com --json
@@ -83,6 +72,12 @@ dotld example.com --json
     }
   ]
 }
+```
+
+One-off key override:
+
+```bash
+dotld example.com --dynadot-key your_dynadot_key
 ```
 
 ## Create Dynadot API Key
