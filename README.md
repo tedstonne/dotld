@@ -1,34 +1,49 @@
 # dotld
 
-CLI for domain availability and price search with Dynadot.
+`dotld` is a CLI for domain availability and registration price search through [Dynadot](https://www.dynadot.com/account/domain/setting/api.html).
 
-## What it does
+## Features
 
-- Searches domain availability and registration price.
-- `dotld <domain.tld>` checks exact domains.
-- `dotld <keyword>` (no TLD) checks mainstream suggestions:
-  - `.com`, `.net`, `.org`, `.io`, `.ai`, `.co`, `.app`, `.dev`, `.sh`
-- Prints compact tree output and supports `--json`.
+- Exact lookup: `dotld example.com`
+- No-TLD suggestions: `dotld keyword`
+- Compact terminal output and `--json` mode
+- User-owned key flow (`DYNADOT_API_PRODUCTION_KEY` or `--dynadot-key`)
+
+## Requirements
+
+- Bun
+- Dynadot production API key
+
+## Quick Start
+
+1. Generate your key in Dynadot:
+   - https://www.dynadot.com/account/domain/setting/api.html
+2. Export it in your shell:
+
+```bash
+export DYNADOT_API_PRODUCTION_KEY=your_key_here
+```
+
+3. Install dependencies and run:
+
+```bash
+bun install
+bun run dotld -- example.com
+```
 
 ## Examples
 
-Exact domain input:
-
-```bash
-dotld example.com
-```
+Exact domain:
 
 ```text
+$ dotld example.com
 example.com · Taken
 ```
 
-Keyword input (no TLD, suggested variants):
-
-```bash
-dotld acme
-```
+Keyword suggestions (no TLD input):
 
 ```text
+$ dotld acme
 acme
 ├─ acme.com · Taken
 ├─ acme.net · Taken
@@ -41,13 +56,10 @@ acme
 └─ acme.sh  · Taken
 ```
 
-JSON input/output:
+JSON mode:
 
-```bash
-dotld example.com --json
-```
-
-```json
+```text
+$ dotld example.com --json
 {
   "results": [
     {
@@ -59,16 +71,6 @@ dotld example.com --json
       "source": "dynadot",
       "cached": false,
       "quotedAt": "2026-02-21T00:00:00.000Z"
-    },
-    {
-      "domain": "example.io",
-      "available": true,
-      "price": "39.99",
-      "currency": "USD",
-      "buyUrl": "https://www.dynadot.com/domain/search?domain=example.io",
-      "source": "dynadot",
-      "cached": false,
-      "quotedAt": "2026-02-21T00:00:00.000Z"
     }
   ]
 }
@@ -76,77 +78,19 @@ dotld example.com --json
 
 One-off key override:
 
-```bash
-dotld example.com --dynadot-key your_dynadot_key
+```text
+$ dotld example.com --dynadot-key your_dynadot_key
+example.com · Taken
 ```
 
-## Create Dynadot API Key
-
-1. Log in to Dynadot.
-2. Open `https://www.dynadot.com/account/domain/setting/api.html`.
-3. Generate a production API key.
-4. Export it in your shell:
-
-```bash
-export DYNADOT_API_PRODUCTION_KEY=your_key_here
-```
-
-## Setup
-
-```bash
-bun install
-```
-
-## Run
-
-```bash
-bun run dotld -- <domain.tld>
-bun run dotld -- <keyword>
-```
-
-Direct key override:
-
-```bash
-bun run dotld -- <domain.tld> --dynadot-key <your_dynadot_key>
-```
-
-You can keep the export in your shell profile (`~/.zshrc`, `~/.bashrc`, or fish config) for persistence.
-
-JSON mode:
-
-```bash
-bun run dotld -- <domain.tld> --json
-```
-
-## Local install
+## Local Install
 
 ```bash
 bun run link:local
-dotld <domain.tld>
+dotld example.com
 ```
 
-## curl | bash installer
-
-Build release binaries:
-
-```bash
-bun run build:release
-```
-
-Automated release (runs lint/check/test, builds binaries, updates `CHANGELOG.md`, tags, pushes, and creates GitHub release assets):
-
-```bash
-bun run release
-```
-
-Optional release modes:
-
-```bash
-bun run release --dry-run
-bun run release --bump minor
-bun run release --version 1.0.0
-bun run release --notes "custom release notes"
-```
+## Installer
 
 Install from GitHub Releases:
 
@@ -157,7 +101,30 @@ DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/
 Install and run immediately:
 
 ```bash
-DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/dotld/main/scripts/install.sh | bash -s -- -- <domain.tld>
+DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/dotld/main/scripts/install.sh | bash -s -- -- example.com
+```
+
+## Release (Maintainers)
+
+Build binaries only:
+
+```bash
+bun run build:release
+```
+
+Automated release (lint, check, test, build, changelog, tag, push, GitHub release assets):
+
+```bash
+bun run release
+```
+
+Other release options:
+
+```bash
+bun run release --dry-run
+bun run release --bump minor
+bun run release --version 1.0.0
+bun run release --notes "custom release notes"
 ```
 
 ## Validation
@@ -168,7 +135,7 @@ bun check
 bun test
 ```
 
-## Dynadot limits note
+## Dynadot Limits
 
 Regular Dynadot accounts are limited to 1 domain per `search` command and 60 requests/min.
-This CLI intentionally uses single-domain requests for predictable behavior.
+`dotld` uses single-domain requests for predictable behavior.
