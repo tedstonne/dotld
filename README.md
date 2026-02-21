@@ -29,6 +29,62 @@ dotld example.com --json
 dotld example.com --dynadot-key your_dynadot_key
 ```
 
+## Example output
+
+Single exact domain:
+
+```text
+example.com · Taken
+```
+
+Keyword suggestions:
+
+```text
+acme
+├─ acme.com · Taken
+├─ acme.net · Taken
+├─ acme.org · Taken
+├─ acme.io  · $39.99 · https://www.dynadot.com/domain/search?domain=acme.io
+├─ acme.ai  · Taken
+├─ acme.co  · Taken
+├─ acme.app · Taken
+├─ acme.dev · Taken
+└─ acme.sh  · Taken
+```
+
+JSON mode:
+
+```bash
+dotld example.com --json
+```
+
+```json
+{
+  "results": [
+    {
+      "domain": "example.com",
+      "available": false,
+      "price": null,
+      "currency": "USD",
+      "buyUrl": null,
+      "source": "dynadot",
+      "cached": false,
+      "quotedAt": "2026-02-21T00:00:00.000Z"
+    },
+    {
+      "domain": "example.io",
+      "available": true,
+      "price": "39.99",
+      "currency": "USD",
+      "buyUrl": "https://www.dynadot.com/domain/search?domain=example.io",
+      "source": "dynadot",
+      "cached": false,
+      "quotedAt": "2026-02-21T00:00:00.000Z"
+    }
+  ]
+}
+```
+
 ## Create Dynadot API Key
 
 1. Log in to Dynadot.
