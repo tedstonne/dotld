@@ -1,13 +1,33 @@
 # dotld
 
-CLI for fast Dynadot availability checks with clean terminal output.
+CLI for domain availability and price search with Dynadot.
 
 ## What it does
 
-- `dotld name.tld` checks a single domain.
-- `dotld name` (no TLD) checks mainstream suggestions:
+- Searches domain availability and registration price.
+- `dotld <domain.tld>` checks exact domains.
+- `dotld <keyword>` (no TLD) checks mainstream suggestions:
   - `.com`, `.net`, `.org`, `.io`, `.ai`, `.co`, `.app`, `.dev`, `.sh`
 - Prints compact tree output and supports `--json`.
+
+## Example queries
+
+```bash
+# Single exact domain
+dotld example.com
+
+# Name without TLD (suggestions)
+dotld acme
+
+# Multiple exact domains
+dotld example.com example.io
+
+# JSON output
+dotld example.com --json
+
+# One-off key override
+dotld example.com --dynadot-key your_dynadot_key
+```
 
 ## Create Dynadot API Key
 
@@ -29,14 +49,14 @@ bun install
 ## Run
 
 ```bash
-bun run dotld -- murk.ink
-bun run dotld -- murk
+bun run dotld -- <domain.tld>
+bun run dotld -- <keyword>
 ```
 
 Direct key override:
 
 ```bash
-bun run dotld -- murk --dynadot-key your_key_here
+bun run dotld -- <domain.tld> --dynadot-key <your_dynadot_key>
 ```
 
 You can keep the export in your shell profile (`~/.zshrc`, `~/.bashrc`, or fish config) for persistence.
@@ -44,14 +64,14 @@ You can keep the export in your shell profile (`~/.zshrc`, `~/.bashrc`, or fish 
 JSON mode:
 
 ```bash
-bun run dotld -- murk --json
+bun run dotld -- <domain.tld> --json
 ```
 
 ## Local install
 
 ```bash
 bun run link:local
-dotld murk
+dotld <domain.tld>
 ```
 
 ## curl | bash installer
@@ -60,6 +80,21 @@ Build release binaries:
 
 ```bash
 bun run build:release
+```
+
+Automated release (runs lint/check/test, builds binaries, updates `CHANGELOG.md`, tags, pushes, and creates GitHub release assets):
+
+```bash
+bun run release
+```
+
+Optional release modes:
+
+```bash
+bun run release --dry-run
+bun run release --bump minor
+bun run release --version 1.0.0
+bun run release --notes "custom release notes"
 ```
 
 Install from GitHub Releases:
@@ -71,7 +106,7 @@ DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/
 Install and run immediately:
 
 ```bash
-DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/dotld/main/scripts/install.sh | bash -s -- -- murk
+DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/dotld/main/scripts/install.sh | bash -s -- -- <domain.tld>
 ```
 
 ## Validation

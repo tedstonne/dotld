@@ -10,6 +10,7 @@
     "link:local": "bun run scripts/link-local.ts",
     "unlink:local": "bun run scripts/unlink-local.ts",
     "build:release": "bash scripts/release-build.sh",
+    "release": "bun run scripts/release.ts",
     "lint": "biome check .",
     "format": "biome format --write .",
     "check": "tsc --noEmit",
