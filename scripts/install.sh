@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="${DOTLD_REPO:-YOUR_GITHUB_USER/dotld}"
+REPO="${DOTLD_REPO:-tedstonne/dotld}"
 VERSION="latest"
 BIN_DIR="${DOTLD_BIN_DIR:-$HOME/.local/bin}"
 
@@ -28,11 +28,6 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-
-if [[ "$REPO" == *"YOUR_GITHUB_USER"* ]]; then
-  printf "Set your repo first. Example: DOTLD_REPO=acme/dotld\n" >&2
-  exit 1
-fi
 
 OS_RAW="$(uname -s)"
 ARCH_RAW="$(uname -m)"

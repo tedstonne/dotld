@@ -8,27 +8,33 @@
 - No-TLD suggestions: `dotld keyword`
 - Compact terminal output and `--json` mode
 - User-owned key flow (`DYNADOT_API_PRODUCTION_KEY` or `--dynadot-key`)
+- Auto-persists API key to `~/.config/dotld/config.json`
 
 ## Requirements
 
-- Bun
 - Dynadot production API key
 
 ## Quick Start
 
 1. Generate your key in Dynadot:
    - https://www.dynadot.com/account/domain/setting/api.html
-2. Export it in your shell:
+2. Run with your key (auto-saved for next time):
+
+```bash
+dotld --dynadot-key your_key_here example.com
+```
+
+3. Subsequent runs need no key:
+
+```bash
+dotld example.com
+```
+
+Or export it in your shell:
 
 ```bash
 export DYNADOT_API_PRODUCTION_KEY=your_key_here
-```
-
-3. Install dependencies and run:
-
-```bash
-bun install
-bun run dotld -- example.com
+dotld example.com
 ```
 
 ## Examples
@@ -68,7 +74,6 @@ $ dotld example.com --json
       "price": null,
       "currency": "USD",
       "buyUrl": null,
-      "source": "dynadot",
       "cached": false,
       "quotedAt": "2026-02-21T00:00:00.000Z"
     }
@@ -83,56 +88,55 @@ $ dotld example.com --dynadot-key your_dynadot_key
 example.com · Taken
 ```
 
-## Local Install
+## Claude Code Skill
+
+Install as a Claude Code skill to let Claude search domains for you:
 
 ```bash
-bun run link:local
-dotld example.com
+# skill.sh
+npx skills add tedstonne/dotld
+
+# ClawHub
+clawhub install dotld
 ```
 
-## Installer
+## Install
 
-Install from GitHub Releases:
+From GitHub Releases:
 
 ```bash
-DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/dotld/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/install.sh | bash
 ```
 
 Install and run immediately:
 
 ```bash
-DOTLD_REPO=your-org/dotld curl -fsSL https://raw.githubusercontent.com/your-org/dotld/main/scripts/install.sh | bash -s -- -- example.com
+curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/install.sh | bash -s -- -- example.com
+```
+
+## Build from Source
+
+```bash
+go build -o dotld .
+```
+
+Cross-platform binaries:
+
+```bash
+make build
 ```
 
 ## Release (Maintainers)
 
-Build binaries only:
-
 ```bash
-bun run build:release
-```
-
-Automated release (lint, check, test, build, changelog, tag, push, GitHub release assets):
-
-```bash
-bun run release
-```
-
-Other release options:
-
-```bash
-bun run release --dry-run
-bun run release --bump minor
-bun run release --version 1.0.0
-bun run release --notes "custom release notes"
+make build
 ```
 
 ## Validation
 
 ```bash
-bun lint
-bun check
-bun test
+make test
+make lint
 ```
 
 ## Dynadot Limits
