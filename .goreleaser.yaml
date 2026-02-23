@@ -1,0 +1,25 @@
+version: 2
+
+builds:
+  - binary: dotld
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: [binary]
+    name_template: "dotld-{{ .Os }}-{{ if eq .Arch \"amd64\" }}x64{{ else }}{{ .Arch }}{{ end }}"
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^merge"
