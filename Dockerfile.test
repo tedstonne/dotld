@@ -1,0 +1,19 @@
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    git \
+    jq \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /root/.local/bin
+ENV PATH="/root/.local/bin:${PATH}"
+
+WORKDIR /app
+
+COPY skills/ skills/
+COPY scripts/smoke-test.sh scripts/smoke-test.sh
+RUN chmod +x scripts/smoke-test.sh
+
+CMD ["scripts/smoke-test.sh"]
