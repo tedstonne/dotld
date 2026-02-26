@@ -123,7 +123,7 @@ printf "\n=== Stage 4: OpenCode CLI ===\n\n"
 
 if command -v opencode &>/dev/null; then
   pass "opencode is in PATH"
-  OC_VERSION="$(opencode --version 2>&1 || true)"
+  OC_VERSION="$(opencode -v 2>&1 || true)"
   printf "  opencode version: %s\n" "$OC_VERSION"
 else
   fail "opencode not found in PATH"
@@ -166,7 +166,7 @@ if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]
   # Step 1: Ask the model to write a prompt about domain names.
   # This ensures the test input is never hardcoded — the model generates it.
   printf "  Generating prompt via OpenCode...\n"
-  GEN_PROMPT="$(timeout 30 opencode run \
+  GEN_PROMPT="$(timeout 30 opencode -p \
     "Write a single short sentence (under 20 words) where someone asks to brainstorm or check domain name availability for a project or startup idea. Output ONLY the sentence, no quotes, no explanation." \
     2>&1 || true)"
 
@@ -183,7 +183,7 @@ if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]
     # Step 2: Feed the model-generated prompt to a fresh session.
     # The model should recognize domain intent, discover the dotld skill,
     # and invoke dotld on its own.
-    OC_OUTPUT="$(timeout 120 opencode run "$GEN_PROMPT" 2>&1 || true)"
+    OC_OUTPUT="$(timeout 120 opencode -p "$GEN_PROMPT" 2>&1 || true)"
 
     printf "  output preview:\n"
     echo "$OC_OUTPUT" | head -20 | sed 's/^/    /'
