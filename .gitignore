@@ -4,4 +4,5 @@ dist
 /dotld
 .agents/
 .claude/skills/
+.opencode/
 skills-lock.json
