@@ -155,13 +155,17 @@ elif [[ -n "${OPENAI_API_KEY:-}" ]]; then
 fi
 
 if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]; then
+  # Pick a random keyword each run so the test isn't hardcoded
+  WORDS=("nova" "drift" "pixel" "ember" "flux" "grove" "pulse" "orbit" "cedar" "spark")
+  KEYWORD="${WORDS[$((RANDOM % ${#WORDS[@]}))]}"
+  printf "  keyword: %s\n" "$KEYWORD"
   printf "  Running OpenCode with natural prompt...\n\n"
 
   # Natural prompt — does NOT mention dotld, skills, or any tool name.
   # The model should recognize domain brainstorming intent, find the dotld
-  # skill on its own, and invoke `dotld third` to check availability.
+  # skill on its own, and invoke `dotld $KEYWORD` to check availability.
   OC_OUTPUT="$(timeout 120 opencode run \
-    "Let's brainstorm domain names. I like the word third — check what's available." \
+    "Let's brainstorm domain names. I like the word ${KEYWORD} — check what's available." \
     2>&1 || true)"
 
   printf "  output preview:\n"
@@ -169,10 +173,10 @@ if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]
   printf "\n"
 
   # Success: the model ran `dotld` — look for TLD results that only dotld produces
-  if echo "$OC_OUTPUT" | grep -qiE "third\.(com|net|org|io|ai|co|app|dev|sh)"; then
-    pass "OpenCode invoked dotld — found third.* domain results"
+  if echo "$OC_OUTPUT" | grep -qiE "${KEYWORD}\.(com|net|org|io|ai|co|app|dev|sh)"; then
+    pass "OpenCode invoked dotld — found ${KEYWORD}.* domain results"
   else
-    fail "No third.* domain results in output — skill may not have triggered"
+    fail "No ${KEYWORD}.* domain results in output — skill may not have triggered"
   fi
 
   # Bonus: check if pricing or availability info came back (Taken / $price)
