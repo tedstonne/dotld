@@ -152,7 +152,7 @@ HAS_PROVIDER=false
 
 if [[ -n "${OPENCODE_API_KEY:-}" ]]; then
   HAS_PROVIDER=true
-  printf "  provider: OpenCode Zen\n"
+  printf "  provider: OpenCode Zen (glm-4.7-free)\n"
 elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
   HAS_PROVIDER=true
   printf "  provider: GitHub Copilot\n"
