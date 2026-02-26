@@ -30,18 +30,14 @@ COPY --from=builder /dotld /root/.local/bin/dotld
 
 WORKDIR /app
 
-# Copy skills and test scripts
-COPY skills/ skills/
+# Install dotld skill from skills.sh for both OpenCode and Claude Code
+RUN npx -y skills add tedstonne/dotld -a opencode -a claude-code
+
+# Copy OpenCode config
+COPY opencode.docker.json /root/.config/opencode/opencode.json
+
+# Copy test script
 COPY scripts/smoke-test.sh scripts/smoke-test.sh
 RUN chmod +x scripts/smoke-test.sh
-
-# Install dotld skill for OpenCode (and Claude Code compat path)
-RUN mkdir -p /root/.config/opencode/skills/dotld \
-             /root/.claude/skills/dotld \
-  && cp -r skills/dotld/* /root/.config/opencode/skills/dotld/ \
-  && cp -r skills/dotld/* /root/.claude/skills/dotld/
-
-# Copy OpenCode config if provided
-COPY opencode.docker.json /root/.config/opencode/opencode.json
 
 CMD ["scripts/smoke-test.sh"]

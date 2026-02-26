@@ -58,48 +58,56 @@ else
   fi
 fi
 
-# ---------- Stage 3: Skill Install ----------
+# ---------- Stage 3: Skill Install (via skills.sh) ----------
 
-printf "\n=== Stage 3: Skill Install ===\n\n"
+printf "\n=== Stage 3: Skill Install (via skills.sh) ===\n\n"
+
+# Skills were installed during docker build via: npx skills add tedstonne/dotld -a opencode -a claude-code
+# Verify they landed in the expected directories
 
 # Check Claude Code skill path
 CLAUDE_SKILL_DIR="$HOME/.claude/skills/dotld"
 if [[ -f "$CLAUDE_SKILL_DIR/SKILL.md" ]]; then
-  pass "SKILL.md installed to $CLAUDE_SKILL_DIR"
+  pass "SKILL.md installed to $CLAUDE_SKILL_DIR (claude-code)"
 else
-  # Try installing from /app if not already there
-  mkdir -p "$CLAUDE_SKILL_DIR"
-  cp -r /app/skills/dotld/* "$CLAUDE_SKILL_DIR/" 2>/dev/null || true
-  if [[ -f "$CLAUDE_SKILL_DIR/SKILL.md" ]]; then
-    pass "SKILL.md installed to $CLAUDE_SKILL_DIR"
-  else
-    fail "SKILL.md not found at $CLAUDE_SKILL_DIR"
-  fi
+  fail "SKILL.md not found at $CLAUDE_SKILL_DIR — npx skills add may have failed for claude-code"
 fi
 
 # Check OpenCode skill path
 OPENCODE_SKILL_DIR="$HOME/.config/opencode/skills/dotld"
 if [[ -f "$OPENCODE_SKILL_DIR/SKILL.md" ]]; then
-  pass "SKILL.md installed to $OPENCODE_SKILL_DIR"
+  pass "SKILL.md installed to $OPENCODE_SKILL_DIR (opencode)"
 else
-  fail "SKILL.md not found at $OPENCODE_SKILL_DIR"
+  fail "SKILL.md not found at $OPENCODE_SKILL_DIR — npx skills add may have failed for opencode"
 fi
 
-# Validate SKILL.md frontmatter
-FRONTMATTER="$(sed -n '/^---$/,/^---$/p' "$CLAUDE_SKILL_DIR/SKILL.md")"
-for FIELD in name allowed-tools description; do
-  if echo "$FRONTMATTER" | grep -q "$FIELD"; then
-    pass "SKILL.md frontmatter has '$FIELD'"
-  else
-    fail "SKILL.md frontmatter missing '$FIELD'"
-  fi
-done
+# Validate SKILL.md frontmatter from whichever path exists
+SKILL_FILE=""
+if [[ -f "$CLAUDE_SKILL_DIR/SKILL.md" ]]; then
+  SKILL_FILE="$CLAUDE_SKILL_DIR/SKILL.md"
+elif [[ -f "$OPENCODE_SKILL_DIR/SKILL.md" ]]; then
+  SKILL_FILE="$OPENCODE_SKILL_DIR/SKILL.md"
+fi
 
-# Validate references directory
-if [[ -f "$OPENCODE_SKILL_DIR/references/cli-reference.md" ]]; then
-  pass "cli-reference.md present in skill references"
+if [[ -n "$SKILL_FILE" ]]; then
+  FRONTMATTER="$(sed -n '/^---$/,/^---$/p' "$SKILL_FILE")"
+  for FIELD in name allowed-tools description; do
+    if echo "$FRONTMATTER" | grep -q "$FIELD"; then
+      pass "SKILL.md frontmatter has '$FIELD'"
+    else
+      fail "SKILL.md frontmatter missing '$FIELD'"
+    fi
+  done
+
+  # Validate references directory
+  SKILL_BASE="$(dirname "$SKILL_FILE")"
+  if [[ -f "$SKILL_BASE/references/cli-reference.md" ]]; then
+    pass "cli-reference.md present in skill references"
+  else
+    fail "cli-reference.md missing from skill references"
+  fi
 else
-  fail "cli-reference.md missing from skill references"
+  fail "No SKILL.md found in either agent path — cannot validate frontmatter"
 fi
 
 # ---------- Stage 4: OpenCode CLI ----------
