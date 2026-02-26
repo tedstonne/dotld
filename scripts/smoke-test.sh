@@ -155,25 +155,31 @@ elif [[ -n "${OPENAI_API_KEY:-}" ]]; then
 fi
 
 if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]; then
-  printf "  Running OpenCode with dotld skill...\n\n"
+  printf "  Running OpenCode with natural prompt...\n\n"
 
-  # Use opencode run in headless mode to trigger a domain search via the skill
-  OC_OUTPUT="$(timeout 60 opencode run \
-    "Use the dotld skill to check if the domain example.com is available. Run: dotld example.com --json" \
+  # Natural prompt — does NOT mention dotld, skills, or any tool name.
+  # The model should recognize domain brainstorming intent, find the dotld
+  # skill on its own, and invoke `dotld third` to check availability.
+  OC_OUTPUT="$(timeout 120 opencode run \
+    "Let's brainstorm domain names. I like the word third — check what's available." \
     2>&1 || true)"
 
-  if echo "$OC_OUTPUT" | grep -qi "example\.com\|taken\|available\|domain"; then
-    pass "OpenCode triggered dotld skill — domain result found"
+  printf "  output preview:\n"
+  echo "$OC_OUTPUT" | head -20 | sed 's/^/    /'
+  printf "\n"
+
+  # Success: the model ran `dotld` — look for TLD results that only dotld produces
+  if echo "$OC_OUTPUT" | grep -qiE "third\.(com|net|org|io|ai|co|app|dev|sh)"; then
+    pass "OpenCode invoked dotld — found third.* domain results"
   else
-    fail "OpenCode skill output did not contain domain results"
-    printf "  output: %.500s\n" "$OC_OUTPUT"
+    fail "No third.* domain results in output — skill may not have triggered"
   fi
 
-  # Check if opencode produced JSON-like output from dotld
-  if echo "$OC_OUTPUT" | grep -q '"results"'; then
-    pass "OpenCode output contains dotld JSON results"
+  # Bonus: check if pricing or availability info came back (Taken / $price)
+  if echo "$OC_OUTPUT" | grep -qiE "taken|\\\$[0-9]+"; then
+    pass "Output contains availability/pricing data from Dynadot"
   else
-    skip "OpenCode output did not contain raw JSON (may have summarized)"
+    skip "No pricing/availability markers found (model may have summarized differently)"
   fi
 else
   if [[ "$HAS_PROVIDER" == "false" ]]; then
