@@ -1,7 +1,7 @@
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
-.PHONY: build dev test lint format release release-patch release-minor release-major release-dry smoke clean
+.PHONY: build dev test lint format release release-patch release-minor release-major release-dry smoke smoke-full clean
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o dist/dotld .
@@ -35,6 +35,15 @@ release-dry:
 smoke:
 	docker build -f Dockerfile.test -t dotld-smoke .
 	docker run --rm -e DYNADOT_API_PRODUCTION_KEY dotld-smoke
+
+smoke-full:
+	docker build -f Dockerfile.test -t dotld-smoke .
+	docker run --rm \
+		-e DYNADOT_API_PRODUCTION_KEY \
+		-e OPENCODE_API_KEY \
+		-e GITHUB_TOKEN \
+		-e OPENAI_API_KEY \
+		dotld-smoke
 
 clean:
 	rm -rf dist

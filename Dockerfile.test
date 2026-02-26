@@ -1,3 +1,13 @@
+# Stage 1: Build dotld from source
+FROM golang:1.24-bookworm AS builder
+
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -ldflags "-s -w -X main.version=smoke-test" -o /dotld .
+
+# Stage 2: Test environment
 FROM ubuntu:24.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -5,15 +15,33 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     jq \
+    unzip \
+    nodejs \
+    npm \
   && rm -rf /var/lib/apt/lists/*
 
+# Install OpenCode CLI
+RUN curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
+
+# Place dotld binary in PATH
 RUN mkdir -p /root/.local/bin
 ENV PATH="/root/.local/bin:${PATH}"
+COPY --from=builder /dotld /root/.local/bin/dotld
 
 WORKDIR /app
 
+# Copy skills and test scripts
 COPY skills/ skills/
 COPY scripts/smoke-test.sh scripts/smoke-test.sh
 RUN chmod +x scripts/smoke-test.sh
+
+# Install dotld skill for OpenCode (and Claude Code compat path)
+RUN mkdir -p /root/.config/opencode/skills/dotld \
+             /root/.claude/skills/dotld \
+  && cp -r skills/dotld/* /root/.config/opencode/skills/dotld/ \
+  && cp -r skills/dotld/* /root/.claude/skills/dotld/
+
+# Copy OpenCode config if provided
+COPY opencode.docker.json /root/.config/opencode/opencode.json
 
 CMD ["scripts/smoke-test.sh"]
