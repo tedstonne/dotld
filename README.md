@@ -13,7 +13,8 @@ acme
 ├─ acme.co  · Taken
 ├─ acme.app · Taken
 ├─ acme.dev · Taken
-└─ acme.sh  · Taken
+├─ acme.sh  · Taken
+└─ acme.so  · Taken
 ```
 
 Type a keyword, get every TLD that matters. Available domains show price and a link to buy.

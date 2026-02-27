@@ -2,7 +2,7 @@ package cli
 
 import "regexp"
 
-var mainstreamTLDs = []string{"com", "net", "org", "io", "ai", "co", "app", "dev", "sh"}
+var mainstreamTLDs = []string{"com", "net", "org", "io", "ai", "co", "app", "dev", "sh", "so"}
 
 type queryGroup struct {
 	Input     string
