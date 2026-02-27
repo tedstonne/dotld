@@ -35,27 +35,29 @@ fi
 printf "\n=== Stage 2: Live API Test ===\n\n"
 
 if [[ -z "${DYNADOT_API_PRODUCTION_KEY:-}" ]]; then
-  skip "DYNADOT_API_PRODUCTION_KEY not set — skipping API tests"
+  fail "DYNADOT_API_PRODUCTION_KEY not set — required for smoke tests"
+  printf "Cannot continue without API key\n"
+  exit 1
+fi
+
+OUTPUT="$(dotld example.com 2>&1 || true)"
+if echo "$OUTPUT" | grep -qi "taken"; then
+  pass "dotld example.com returned Taken"
 else
-  OUTPUT="$(dotld example.com 2>&1 || true)"
-  if echo "$OUTPUT" | grep -qi "taken"; then
-    pass "dotld example.com returned Taken"
-  else
-    fail "dotld example.com unexpected output: $OUTPUT"
-  fi
+  fail "dotld example.com unexpected output: $OUTPUT"
+fi
 
-  JSON="$(dotld example.com --json 2>&1 || true)"
-  if echo "$JSON" | jq -e '.results[0].domain' &>/dev/null; then
-    pass "dotld example.com --json has valid JSON with results[].domain"
-  else
-    fail "dotld example.com --json invalid: $JSON"
-  fi
+JSON="$(dotld example.com --json 2>&1 || true)"
+if echo "$JSON" | jq -e '.results[0].domain' &>/dev/null; then
+  pass "dotld example.com --json has valid JSON with results[].domain"
+else
+  fail "dotld example.com --json invalid: $JSON"
+fi
 
-  if echo "$JSON" | jq -e '.results[0] | has("available", "price", "currency")' &>/dev/null; then
-    pass "JSON contains expected fields (available, price, currency)"
-  else
-    fail "JSON missing expected fields"
-  fi
+if echo "$JSON" | jq -e '.results[0] | has("available", "price", "currency")' &>/dev/null; then
+  pass "JSON contains expected fields (available, price, currency)"
+else
+  fail "JSON missing expected fields"
 fi
 
 # ---------- Stage 3: Skill Install (via skills.sh) ----------
@@ -208,9 +210,6 @@ if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]
 else
   if [[ "$HAS_PROVIDER" == "false" ]]; then
     skip "No model provider configured — set OPENCODE_API_KEY, GITHUB_TOKEN, or OPENAI_API_KEY"
-  fi
-  if [[ -z "${DYNADOT_API_PRODUCTION_KEY:-}" ]]; then
-    skip "DYNADOT_API_PRODUCTION_KEY not set — skill cannot query domains"
   fi
   skip "Skipping OpenCode live skill integration test"
 fi
