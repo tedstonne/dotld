@@ -1,3 +1,13 @@
+# Stage 1: Build dotld from source
+FROM golang:1.24-bookworm AS builder
+
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -ldflags "-s -w -X main.version=smoke-test" -o /dotld .
+
+# Stage 2: Test environment
 FROM ubuntu:24.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -5,14 +15,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     jq \
+    unzip \
+    nodejs \
+    npm \
   && rm -rf /var/lib/apt/lists/*
 
+# Install OpenCode CLI
+RUN curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
+
+# Place dotld binary in PATH and include OpenCode's install path
 RUN mkdir -p /root/.local/bin
-ENV PATH="/root/.local/bin:${PATH}"
+ENV PATH="/root/.opencode/bin:/root/.local/bin:${PATH}"
+COPY --from=builder /dotld /root/.local/bin/dotld
 
 WORKDIR /app
 
-COPY skills/ skills/
+# Install dotld skill globally from skills.sh
+# --global: installs to ~/.agents/skills/ (universal) with symlinks for each agent
+# --yes: skip interactive prompts
+RUN npx -y skills add tedstonne/dotld --global --yes
+
+# Copy OpenCode config
+COPY opencode.docker.json /root/.config/opencode/opencode.json
+
+# Copy test script
 COPY scripts/smoke-test.sh scripts/smoke-test.sh
 RUN chmod +x scripts/smoke-test.sh
 
