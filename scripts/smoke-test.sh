@@ -149,69 +149,32 @@ fi
 
 printf "\n=== Stage 5: OpenCode + dotld Skill Integration ===\n\n"
 
-# Determine if we have a model provider configured
-HAS_PROVIDER=false
+printf "  model: opencode/big-pickle (free)\n"
 
-if [[ -n "${OPENCODE_API_KEY:-}" ]]; then
-  HAS_PROVIDER=true
-  printf "  provider: OpenCode Zen (glm-4.7-free)\n"
-elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
-  HAS_PROVIDER=true
-  printf "  provider: GitHub Copilot\n"
-elif [[ -n "${OPENAI_API_KEY:-}" ]]; then
-  HAS_PROVIDER=true
-  printf "  provider: OpenAI\n"
+PROMPT="Come up with a single creative startup name, then check if domains are available for it"
+printf "  prompt: %s\n" "$PROMPT"
+printf "  Running OpenCode with prompt...\n\n"
+
+OC_OUTPUT="$(timeout 120 opencode run "$PROMPT" 2>&1 || true)"
+
+printf "  output preview:\n"
+echo "$OC_OUTPUT" | head -20 | sed 's/^/    /'
+printf "\n"
+
+# Success: look for any word.tld pattern that only dotld produces
+if echo "$OC_OUTPUT" | grep -qiE "[a-z0-9]+\.(com|net|org|io|ai|co|app|dev|sh).*(\·|Taken|\\\$[0-9])"; then
+  pass "OpenCode invoked dotld — found domain results with availability data"
+elif echo "$OC_OUTPUT" | grep -qiE "[a-z0-9]+\.(com|net|org|io|ai|co|app|dev|sh)"; then
+  pass "OpenCode invoked dotld — found domain.tld results"
+else
+  fail "No domain.tld results in output — skill may not have triggered"
 fi
 
-if [[ "$HAS_PROVIDER" == "true" ]] && [[ -n "${DYNADOT_API_PRODUCTION_KEY:-}" ]]; then
-
-  # Step 1: Ask the model to write a prompt about domain names.
-  # This ensures the test input is never hardcoded — the model generates it.
-  printf "  Generating prompt via OpenCode...\n"
-  GEN_PROMPT="$(timeout 30 opencode -p \
-    "Write a single short sentence (under 20 words) where someone asks to brainstorm or check domain name availability for a project or startup idea. Output ONLY the sentence, no quotes, no explanation." \
-    2>&1 || true)"
-
-  # Strip blank lines and take the last non-empty line (skip any preamble)
-  GEN_PROMPT="$(echo "$GEN_PROMPT" | sed '/^$/d' | tail -1)"
-
-  if [[ -z "$GEN_PROMPT" ]]; then
-    fail "OpenCode failed to generate a prompt"
-  else
-    pass "OpenCode generated prompt"
-    printf "  prompt: %s\n" "$GEN_PROMPT"
-    printf "  Running OpenCode with generated prompt...\n\n"
-
-    # Step 2: Feed the model-generated prompt to a fresh session.
-    # The model should recognize domain intent, discover the dotld skill,
-    # and invoke dotld on its own.
-    OC_OUTPUT="$(timeout 120 opencode -p "$GEN_PROMPT" 2>&1 || true)"
-
-    printf "  output preview:\n"
-    echo "$OC_OUTPUT" | head -20 | sed 's/^/    /'
-    printf "\n"
-
-    # Success: look for any word.tld pattern that only dotld produces
-    if echo "$OC_OUTPUT" | grep -qiE "[a-z0-9]+\.(com|net|org|io|ai|co|app|dev|sh).*(\·|Taken|\\\$[0-9])"; then
-      pass "OpenCode invoked dotld — found domain results with availability data"
-    elif echo "$OC_OUTPUT" | grep -qiE "[a-z0-9]+\.(com|net|org|io|ai|co|app|dev|sh)"; then
-      pass "OpenCode invoked dotld — found domain.tld results"
-    else
-      fail "No domain.tld results in output — skill may not have triggered"
-    fi
-
-    # Bonus: check if pricing or availability info came back (Taken / $price)
-    if echo "$OC_OUTPUT" | grep -qiE "taken|\\\$[0-9]+"; then
-      pass "Output contains availability/pricing data from Dynadot"
-    else
-      skip "No pricing/availability markers found (model may have summarized differently)"
-    fi
-  fi
+# Bonus: check if pricing or availability info came back (Taken / $price)
+if echo "$OC_OUTPUT" | grep -qiE "taken|\\\$[0-9]+"; then
+  pass "Output contains availability/pricing data from Dynadot"
 else
-  if [[ "$HAS_PROVIDER" == "false" ]]; then
-    skip "No model provider configured — set OPENCODE_API_KEY, GITHUB_TOKEN, or OPENAI_API_KEY"
-  fi
-  skip "Skipping OpenCode live skill integration test"
+  skip "No pricing/availability markers found (model may have summarized differently)"
 fi
 
 # ---------- Results ----------

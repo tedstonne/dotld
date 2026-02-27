@@ -5,10 +5,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     jq \
+    ripgrep \
+    fzf \
   && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode CLI
-RUN curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
+RUN curl -fsSL https://opencode.ai/install | bash
 
 # Both installers place binaries outside default PATH
 ENV PATH="/root/.opencode/bin:/root/.local/bin:${PATH}"
