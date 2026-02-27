@@ -123,20 +123,22 @@ go build -o dotld .
 Cross-platform binaries:
 
 ```bash
-make build
+just build
 ```
 
 ## Release (Maintainers)
 
 ```bash
-make build
+just release          # patch (default)
+just release minor
+just release major
 ```
 
 ## Validation
 
 ```bash
-make test
-make lint
+just test
+just lint
 ```
 
 ## Dynadot Limits
