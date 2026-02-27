@@ -5,7 +5,7 @@ description: >
   mentions domains, TLDs, domain registration, domain availability, or wants
   to find, check, or brainstorm domain names. Runs the dotld CLI to query
   the Dynadot API for real-time pricing and availability.
-version: 1.0.4
+version: 1.0.5
 license: MIT
 allowed-tools: Bash(dotld*)
 metadata:
