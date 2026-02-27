@@ -35,6 +35,14 @@ printf "Releasing %s\n" "$NEXT"
 go vet ./...
 go test ./...
 
+# sync skill version
+SEMVER="${NEXT#v}"
+sed -i "s/^version: .*/version: ${SEMVER}/" skills/dotld/SKILL.md
+if ! git diff --quiet skills/dotld/SKILL.md; then
+  git add skills/dotld/SKILL.md
+  git commit -m "bump skill version to ${SEMVER}"
+fi
+
 if [[ "$DRY_RUN" == true ]]; then
   printf "Dry run — skipping tag and release\n"
   goreleaser release --snapshot --clean
