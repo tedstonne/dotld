@@ -24,7 +24,8 @@ Flags:
   --json
   --currency USD
   --dynadot-key <key>
-  --timeout 10s`
+  --timeout 10s
+  --version, -v`
 
 var (
 	secondsRe = regexp.MustCompile(`^([0-9]+)s$`)
