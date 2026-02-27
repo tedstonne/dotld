@@ -1,38 +1,24 @@
-# Stage 1: Build dotld from source
-FROM golang:1.24-bookworm AS builder
-
-WORKDIR /src
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN go build -ldflags "-s -w -X main.version=smoke-test" -o /dotld .
-
-# Stage 2: Test environment
-FROM ubuntu:24.04
+FROM node:22-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     git \
     jq \
-    unzip \
-    nodejs \
-    npm \
   && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode CLI
 RUN curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
 
-# Place dotld binary in PATH and include OpenCode's install path
-RUN mkdir -p /root/.local/bin
+# Both installers place binaries outside default PATH
 ENV PATH="/root/.opencode/bin:/root/.local/bin:${PATH}"
-COPY --from=builder /dotld /root/.local/bin/dotld
+
+# Install dotld CLI from GitHub Release (same as a real user would)
+RUN curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/install.sh | bash
 
 WORKDIR /app
 
 # Install dotld skill globally from skills.sh
-# --global: installs to ~/.agents/skills/ (universal) with symlinks for each agent
-# --yes: skip interactive prompts
 RUN npx -y skills add tedstonne/dotld --global --yes
 
 # Copy OpenCode config
