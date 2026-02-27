@@ -1,52 +1,6 @@
-# dotld
+# 🌐 dotld
 
-`dotld` is a CLI for domain availability and registration price search through [Dynadot](https://www.dynadot.com/account/domain/setting/api.html).
-
-## Features
-
-- Exact lookup: `dotld example.com`
-- No-TLD suggestions: `dotld keyword`
-- Compact terminal output and `--json` mode
-- User-owned key flow (`DYNADOT_API_PRODUCTION_KEY` or `--dynadot-key`)
-- Auto-persists API key to `~/.config/dotld/config.json`
-
-## Requirements
-
-- Dynadot production API key
-
-## Quick Start
-
-1. Generate your key in Dynadot:
-   - https://www.dynadot.com/account/domain/setting/api.html
-2. Run with your key (auto-saved for next time):
-
-```bash
-dotld --dynadot-key your_key_here example.com
-```
-
-3. Subsequent runs need no key:
-
-```bash
-dotld example.com
-```
-
-Or export it in your shell:
-
-```bash
-export DYNADOT_API_PRODUCTION_KEY=your_key_here
-dotld example.com
-```
-
-## Examples
-
-Exact domain:
-
-```text
-$ dotld example.com
-example.com · Taken
-```
-
-Keyword suggestions (no TLD input):
+Domain TLD search for your CLI and your AI agent. Availability and prices in one command, or one skill install away from your agent.
 
 ```text
 $ dotld acme
@@ -62,86 +16,57 @@ acme
 └─ acme.sh  · Taken
 ```
 
-JSON mode:
-
-```text
-$ dotld example.com --json
-{
-  "results": [
-    {
-      "domain": "example.com",
-      "available": false,
-      "price": null,
-      "currency": "USD",
-      "buyUrl": null,
-      "cached": false,
-      "quotedAt": "2026-02-21T00:00:00.000Z"
-    }
-  ]
-}
-```
-
-One-off key override:
-
-```text
-$ dotld example.com --dynadot-key your_dynadot_key
-example.com · Taken
-```
-
-## Claude Code Skill
-
-Install as a Claude Code skill to let Claude search domains for you:
-
-```bash
-# skill.sh
-npx skills add tedstonne/dotld
-
-# ClawHub
-clawhub install dotld
-```
+Type a keyword, get every TLD that matters. Available domains show price and a link to buy.
 
 ## Install
-
-From GitHub Releases:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/install.sh | bash
 ```
 
-Install and run immediately:
+Requires a [Dynadot production API key](https://www.dynadot.com/account/domain/setting/api.html) (free with any account). Your first run saves the key locally. No config files to manage.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/install.sh | bash -s -- -- example.com
+dotld --dynadot-key YOUR_KEY acme
 ```
 
-## Build from Source
+Every run after that is just `dotld <keyword>`.
+
+## Usage
+
+Check a specific domain:
+
+```text
+$ dotld acme.xyz
+acme.xyz · $9.99 · https://www.dynadot.com/domain/search?domain=acme.xyz
+```
+
+Search across TLDs with a keyword:
+
+```text
+$ dotld startup
+```
+
+Get structured output for scripts and pipelines:
+
+```text
+$ dotld bigpickle.com --json
+```
+
+Override your saved key for a one-off lookup:
+
+```text
+$ dotld bigpickle.com --dynadot-key OTHER_KEY
+```
+
+## Skills
+
+Give your AI agent the ability to search domains mid-conversation.
 
 ```bash
-go build -o dotld .
+npx skills add tedstonne/dotld
 ```
 
-Cross-platform binaries:
+Works with [skills.sh](https://skills.sh) compatible agents: Claude Code, OpenCode, Codex, Gemini CLI, and others.
 
-```bash
-just build
-```
-
-## Release (Maintainers)
-
-```bash
-just release          # patch (default)
-just release minor
-just release major
-```
-
-## Validation
-
-```bash
-just test
-just lint
-```
-
-## Dynadot Limits
-
-Regular Dynadot accounts are limited to 1 domain per `search` command and 60 requests/min.
-`dotld` uses single-domain requests for predictable behavior.
+> **Note:** The skill uses your local `dotld` install. A Dynadot production API key must be configured on your machine.
