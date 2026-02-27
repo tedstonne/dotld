@@ -8,7 +8,7 @@ acme
 ├─ acme.com · Taken
 ├─ acme.net · Taken
 ├─ acme.org · Taken
-├─ acme.io  · $39.99 · https://www.dynadot.com/domain/search?domain=acme.io
+├─ acme.io  · $39.99 · https://www.dynadot.com/domain/search?domain=acme.io&rscreg=github
 ├─ acme.ai  · Taken
 ├─ acme.co  · Taken
 ├─ acme.app · Taken
@@ -39,7 +39,7 @@ Check a specific domain:
 
 ```text
 $ dotld acme.xyz
-acme.xyz · $9.99 · https://www.dynadot.com/domain/search?domain=acme.xyz
+acme.xyz · $9.99 · https://www.dynadot.com/domain/search?domain=acme.xyz&rscreg=github
 ```
 
 Search across TLDs with a keyword:

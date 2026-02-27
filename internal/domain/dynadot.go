@@ -64,7 +64,7 @@ func ParseDynadotPrice(value string) *string {
 }
 
 func AffiliateURL(domain string, template string) string {
-	fallback := "https://www.dynadot.com/domain/search?domain=" + url.QueryEscape(domain)
+	fallback := "https://www.dynadot.com/domain/search?domain=" + url.QueryEscape(domain) + "&rscreg=github"
 	if template == "" || strings.TrimSpace(template) == "" {
 		return fallback
 	}

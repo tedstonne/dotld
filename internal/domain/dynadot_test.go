@@ -34,7 +34,7 @@ func TestAffiliateURLPlaceholder(t *testing.T) {
 
 func TestAffiliateURLFallback(t *testing.T) {
 	url := AffiliateURL("murk.ink", "")
-	expected := "https://www.dynadot.com/domain/search?domain=murk.ink"
+	expected := "https://www.dynadot.com/domain/search?domain=murk.ink&rscreg=github"
 	if url != expected {
 		t.Errorf("expected %s, got %s", expected, url)
 	}
