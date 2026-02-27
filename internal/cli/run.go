@@ -109,9 +109,14 @@ type jsonOutput struct {
 	Results []shared.SearchResult `json:"results"`
 }
 
-func Run(argv []string) int {
+func Run(argv []string, version string) int {
 	options, err := parseArgs(argv)
 	if err != nil {
+		if errors.Is(err, errVersion) {
+			fmt.Fprintf(os.Stdout, "dotld %s\n", version)
+
+			return 0
+		}
 		fmt.Fprintln(os.Stderr, err)
 
 		return 1

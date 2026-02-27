@@ -13,7 +13,7 @@ func withImplicitSearch(args []string) []string {
 		return args
 	}
 	first := args[0]
-	if first == "search" || first == "--help" || first == "-h" {
+	if first == "search" || first == "--help" || first == "-h" || first == "--version" || first == "-v" {
 		return args
 	}
 
@@ -21,5 +21,5 @@ func withImplicitSearch(args []string) []string {
 }
 
 func main() {
-	os.Exit(cli.Run(withImplicitSearch(os.Args[1:])))
+	os.Exit(cli.Run(withImplicitSearch(os.Args[1:]), version))
 }

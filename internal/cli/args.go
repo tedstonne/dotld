@@ -72,7 +72,13 @@ func fromFile(filePath string) ([]string, error) {
 	return domains, nil
 }
 
+var errVersion = fmt.Errorf("__version__")
+
 func parseArgs(argv []string) (cliOptions, error) {
+	if len(argv) > 0 && (argv[0] == "--version" || argv[0] == "-v") {
+		return cliOptions{}, errVersion
+	}
+
 	if len(argv) == 0 || argv[0] != "search" {
 		return cliOptions{}, fmt.Errorf("%s", usage)
 	}
