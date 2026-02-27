@@ -46,3 +46,8 @@ env:
 # remove build artifacts
 clean:
     rm -rf dist
+
+# remove dotld binary and config from local machine
+uninstall:
+    rm -f ~/.local/bin/dotld
+    rm -rf ~/.config/dotld
