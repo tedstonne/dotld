@@ -19,6 +19,14 @@ metadata:
 
 # dotld — Domain Availability & Pricing
 
+## Installation
+
+If `dotld` is not already available on the machine, install it:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/install.sh | bash
+```
+
 ## Prerequisites
 
 dotld requires a Dynadot production API key. The key is resolved in this order:
