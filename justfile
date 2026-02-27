@@ -31,12 +31,12 @@ release-dry:
 
 # build and run e2e tests in Docker
 e2e:
-    docker build -f Dockerfile.test -t dotld-e2e .
+    docker build --no-cache -f Dockerfile.test -t dotld-e2e .
     docker run --rm --env-file .env dotld-e2e
 
 # shell into the e2e container for debugging
 e2e-shell:
-    docker build -f Dockerfile.test -t dotld-e2e .
+    docker build --no-cache -f Dockerfile.test -t dotld-e2e .
     docker run --rm -it --env-file .env dotld-e2e /bin/bash
 
 # generate .env from 1Password

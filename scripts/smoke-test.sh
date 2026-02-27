@@ -20,8 +20,18 @@ else
   exit 1
 fi
 
-VERSION="$(dotld --version 2>&1 || true)"
+VERSION_RAW="$(dotld --version 2>&1 || true)"
+VERSION="$(echo "$VERSION_RAW" | awk '{print $NF}')"
 printf "  version: %s\n" "$VERSION"
+
+LATEST="$(curl -fsSL -o /dev/null -w '%{url_effective}' https://github.com/tedstonne/dotld/releases/latest | grep -oE '[^/]+$' | sed 's/^v//')"
+printf "  latest release: %s\n" "$LATEST"
+
+if [[ "$VERSION" == "$LATEST" ]]; then
+  pass "dotld --version matches latest GitHub release ($LATEST)"
+else
+  fail "dotld --version ($VERSION) does not match latest GitHub release ($LATEST)"
+fi
 
 HELP="$(dotld --help 2>&1 || true)"
 if echo "$HELP" | grep -qi "usage\|domain\|search"; then
