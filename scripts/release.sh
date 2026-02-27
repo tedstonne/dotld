@@ -43,4 +43,6 @@ fi
 
 git tag "$NEXT"
 git push origin "$NEXT"
+
+export GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null)}"
 goreleaser release --clean
