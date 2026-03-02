@@ -37,9 +37,9 @@ go test ./...
 
 # sync skill version
 SEMVER="${NEXT#v}"
-sed -i "s/^version: .*/version: ${SEMVER}/" skills/dotld/SKILL.md
-if ! git diff --quiet skills/dotld/SKILL.md; then
-  git add skills/dotld/SKILL.md
+sed -i "s/^version: .*/version: ${SEMVER}/" skills/domain-search-availability-and-pricing/SKILL.md
+if ! git diff --quiet skills/domain-search-availability-and-pricing/SKILL.md; then
+  git add skills/domain-search-availability-and-pricing/SKILL.md
   git commit -m "bump skill version to ${SEMVER}"
 fi
 
