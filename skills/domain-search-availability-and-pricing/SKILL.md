@@ -1,11 +1,11 @@
 ---
-name: dotld
+name: domain-search-availability-and-pricing
 description: >
   Search domain name availability and registration prices. Use when the user
   mentions domains, TLDs, domain registration, domain availability, or wants
   to find, check, or brainstorm domain names. Runs the dotld CLI to query
   the Dynadot API for real-time pricing and availability.
-version: 1.0.7
+version: 1.0.8
 license: MIT
 allowed-tools: Bash(dotld*)
 metadata:
