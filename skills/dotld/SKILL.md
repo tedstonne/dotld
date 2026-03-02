@@ -1,5 +1,5 @@
 ---
-name: domain-search-availability-and-pricing
+name: dotld
 description: >
   Search domain name availability and registration prices. Use when the user
   mentions domains, TLDs, domain registration, domain availability, or wants

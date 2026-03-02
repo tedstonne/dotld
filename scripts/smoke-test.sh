@@ -75,11 +75,11 @@ fi
 printf "\n=== Stage 3: Skill Install (via skills.sh) ===\n\n"
 
 # skills add --global installs to:
-#   ~/.agents/skills/domain-search-availability-and-pricing/          (universal — OpenCode, Cursor, Codex, etc.)
-#   ~/.claude/skills/domain-search-availability-and-pricing -> symlink (Claude Code)
+#   ~/.agents/skills/dotld/          (universal — OpenCode, Cursor, Codex, etc.)
+#   ~/.claude/skills/dotld -> symlink (Claude Code)
 
-UNIVERSAL_SKILL_DIR="$HOME/.agents/skills/domain-search-availability-and-pricing"
-CLAUDE_SKILL_DIR="$HOME/.claude/skills/domain-search-availability-and-pricing"
+UNIVERSAL_SKILL_DIR="$HOME/.agents/skills/dotld"
+CLAUDE_SKILL_DIR="$HOME/.claude/skills/dotld"
 
 # Check universal path (canonical install location)
 if [[ -f "$UNIVERSAL_SKILL_DIR/SKILL.md" ]]; then

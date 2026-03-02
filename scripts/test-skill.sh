@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_DIR="$HOME/.claude/skills/domain-search-availability-and-pricing"
+SKILL_DIR="$HOME/.claude/skills/dotld"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
@@ -12,7 +12,7 @@ if [[ "${1:-}" == "clean" ]]; then
 fi
 
 mkdir -p "$SKILL_DIR"
-cp -r "$PROJECT_DIR/skills/domain-search-availability-and-pricing/"* "$SKILL_DIR/"
+cp -r "$PROJECT_DIR/skills/dotld/"* "$SKILL_DIR/"
 
 printf "Skill installed to %s\n\n" "$SKILL_DIR"
 printf "To test:\n"

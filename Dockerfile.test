@@ -21,7 +21,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/tedstonne/dotld/main/scripts/in
 WORKDIR /app
 
 # Install dotld skill globally from skills.sh
-RUN npx -y skills add tedstonne/dotld@domain-search-availability-and-pricing --global --yes
+RUN npx -y skills add tedstonne/dotld@dotld --global --yes
 
 # Copy OpenCode config
 COPY opencode.docker.json /root/.config/opencode/opencode.json
